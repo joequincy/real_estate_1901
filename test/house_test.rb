@@ -11,6 +11,7 @@ class HouseTest < Minitest::Test
     @room_2 = Room.new(:bedroom, 11, 15)
     @room_3 = Room.new(:living_room, 25, 15)
     @room_4 = Room.new(:basement, 30, 41)
+    @room_5 = Room.new(:kitchen, 12, 14)
   end
 
   def test_house_exists
@@ -49,5 +50,35 @@ class HouseTest < Minitest::Test
     assert_equal 670, @house.area
     @house.add_room(@room_4)
     assert_equal 1900, @house.area
+  end
+
+  def test_house_calculates_price_per_square_foot
+    assert_nil @house.price_per_square_foot
+    @house.add_room(@room_1)
+    @house.add_room(@room_2)
+    @house.add_room(@room_3)
+    assert_equal 597.01, @house.price_per_square_foot
+    @house.add_room(@room_4)
+    assert_equal 210.53, @house.price_per_square_foot
+  end
+
+  def test_house_returns_rooms_sorted_by_area_largest_to_smallest
+    @house.add_room(@room_1)
+    @house.add_room(@room_2)
+    @house.add_room(@room_3)
+    @house.add_room(@room_4)
+    assert_equal [@room_4,@room_3,@room_2,@room_1], @house.rooms_sorted_by_area
+    @house.add_room(@room_5)
+    assert_equal [@room_4,@room_3,@room_5,@room_2,@room_1], @house.rooms_sorted_by_area
+  end
+  def test_house_returns_hash_of_rooms_by_category
+    @house.add_room(@room_1)
+    @house.add_room(@room_2)
+    @house.add_room(@room_3)
+    @house.add_room(@room_4)
+    returned_hash = @house.rooms_by_category
+    assert_equal [@room_1,@room_2], returned_hash[:bedroom]
+    assert_equal [@room_3], returned_hash[:living_room]
+    assert_equal [@room_4], returned_hash[:basement]
   end
 end
